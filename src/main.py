@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from transformers import AutoTokenizer
 from datasets import load_dataset
+import os 
 
 from model_architecture import Decoder
 from functions import initialize_model, download_model
@@ -23,7 +24,7 @@ optimizer_init = torch.optim.AdamW(model_init.parameters(),lr=1e-4)
 criterion_init = nn.CrossEntropyLoss(ignore_index = tokenizer.pad_token_id)
 
 path='data/pred_model.pth'
-if not path:
+if not os.path.exists(path):
     download_model()
 model,optimizer=initialize_model(model_init, optimizer_init, path, load_dataset, tokenizer, criterion_init)
 
