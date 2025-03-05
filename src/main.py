@@ -4,7 +4,7 @@ from transformers import AutoTokenizer
 from datasets import load_dataset
 
 from model_architecture import Decoder
-from functions import initialize_model
+from functions import initialize_model, download_model
 from UI import ui_ux
 
 checkpoint = 'distilbert-base-cased'
@@ -22,8 +22,10 @@ model_init = Decoder (
 optimizer_init = torch.optim.AdamW(model_init.parameters(),lr=1e-4) 
 criterion_init = nn.CrossEntropyLoss(ignore_index = tokenizer.pad_token_id)
 
-model_pth='data/pred_model.pth'
-model,optimizer=initialize_model(model_init, optimizer_init, model_pth, load_dataset, tokenizer, criterion_init)
+path='data/pred_model.pth'
+if not path:
+    download_model()
+model,optimizer=initialize_model(model_init, optimizer_init, path, load_dataset, tokenizer, criterion_init)
 
 ui_ux(model,tokenizer)
 
