@@ -10,7 +10,7 @@ def tokenize_fn(batch,tokenizer):
   return tokenizer(batch['target'], truncation = True)
 
 def train_load(common_allen, tokenizer):
-    tokenized_datasets = common_allen.map(tokenize_fn(tokenizer), batched = True)
+    tokenized_datasets = common_allen.map(lambda batch: tokenize_fn(batch, tokenizer), batched = True)
     data_collator = DataCollatorWithPadding(tokenizer = tokenizer)
 
     tokenized_datasets = tokenized_datasets.remove_columns(["concept_set_idx", "concepts", "target"])
