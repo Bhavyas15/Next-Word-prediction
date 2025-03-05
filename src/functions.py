@@ -1,13 +1,31 @@
 import torch
 import streamlit as st
 from train import train, save_model, train_load
+import gdown
+import os
+
+def download_model():
+    # Google Drive file ID (Extracted from the link)
+    file_id = "1bZ9XNC5UmONE1WHwL632eJ1WjCC3g6w2"
+
+    # Destination path
+    destination = "data/pred_model.pth"
+
+    # Download the file
+    output=gdown.download(f"https://drive.google.com/uc?id={file_id}", destination, quiet=False)
+
+    # Rename the file if needed
+    if output and output != destination:
+        os.rename(output, destination)
+
+    print("✅ Model downloaded successfully!")
 
 st.cache_resource()
 def load_model(model,optimizer):
     """Loads a trained model and optimizer from a checkpoint."""
     
     model_path = 'data/pred_model.pth'
-    checkpoint = torch.load(model_path, map_location=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+    checkpoint = torch.load(model_path, map_location=torch.device("cuda" if torch.cuda.is_available() else "cpu"), weights_only=False)
 
     # Load state dictionaries
     model.load_state_dict(checkpoint['model_state_dict'])
@@ -21,7 +39,7 @@ def load_model(model,optimizer):
 def predict_next_word(model, tokenizer, text, top_k=3, device="cuda" if torch.cuda.is_available() else "cpu"):
     """Predicts the next word using a trained model."""
     
-    model.to(device)  # Move model to correct device
+    # model.to(device)  # Move model to correct device
 
     # Tokenize input and convert to tensor
     input_ids = tokenizer.encode(text, return_tensors="pt").to(device)
